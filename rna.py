@@ -14,7 +14,8 @@ class RNA:
         if nucleo1 == nucleo2: return
         if nucleo1 > nucleo2:
             nucleo1, nucleo2 = nucleo2, nucleo1
-
+        if nucleo2 - nucleo1 <= 3:
+            return
         if len(self.structure_representation) > 0 :
             for (n1,n2) in self.structure_representation:
                 if nucleo1 > n2 and nucleo2 > n2:
