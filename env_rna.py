@@ -7,12 +7,12 @@ class EnvRNA:
     def reset(self,sequence):
         self.rna = rna_module.RNA(sequence)
 
-    def step(self,action,N = 10):
+    def step(self,action_pair,N = 10):
         previous_value = self.rna.free_energy
-        # TODO Call RNA pairing to update accordingly with the action
-        new_value = 0
+        self.rna.pairing(action_pair[0],action_pair[1])
+        new_value = self.rna.free_energy
         reward = new_value - previous_value
         done = False
         if N == new_value:
             done = True
-        return self.rna.structure_representation,reward,done,""  # This values represent Observation, Reward, Done and info
+        return self.rna.structure_representation_dot,reward,done,""  # This values represent Observation, Reward, Done and info
