@@ -18,15 +18,16 @@ class RNA:
         # TODO Verify bases before connecting them
         if len(self.structure_representation) > 0 :
             for (n1,n2) in self.structure_representation:
-                if nucleo1 < n1 and nucleo2 > n1 and nucleo2 < n2:
+                if not((nucleo1 < n1 and nucleo2 > n2) or (nucleo1 > n1 and nucleo2 < n2) or (nucleo1 == n1 and nucleo2 == n2)):
                     return
-                if nucleo1 < n2 and nucleo1 > n1 and nucleo2 > n2 :
-                    return
+
         if (nucleo1,nucleo2) in self.structure_representation:
             self.structure_representation.remove((nucleo1, nucleo2))
+
         else:
             self.structure_representation.append((nucleo1, nucleo2))
-        self.update_free_energy()
+
+        self.free_energy = self.update_free_energy()
 
     def build_representations(self,sequence):
         return []
