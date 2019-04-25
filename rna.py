@@ -1,15 +1,7 @@
-import numpy as np
-SEQUENCE_LENGTH = 10
-
-
 class RNA:
-    def __init__(self, sequence):
-        # if len(sequence) < SEQUENCE_LENGTH:
-        #    padding_size = SEQUENCE_LENGTH - len(sequence)
-        #    for i in range (padding_size):
-        #        sequence += 'E'
 
-        self.sequence = sequence # TODO Define the initial sequence
+    def __init__(self, sequence):
+        self.sequence = sequence
         self.structure_representation =  self.build_representations(self.sequence)
         self.free_energy = self.update_free_energy()
 
@@ -34,6 +26,6 @@ class RNA:
 
     #  This function is here for decoupling in case a new and more accurate energy function is given.
     def update_free_energy(self):
-        # For now this represents the number of elements in the sequence - connections
-        return SEQUENCE_LENGTH - len(self.structure_representation)
+        # For now this represents the number of connections
+        return len(self.structure_representation)
 
