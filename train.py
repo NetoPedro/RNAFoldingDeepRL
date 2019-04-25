@@ -2,10 +2,10 @@ import policy as policy_module
 import env_rna
 import torch
 import numpy as np
-# TODO Insert Constants to hold values like max iterations, number of epochs and so on
 
 env = env_rna.EnvRNA()
 def train():
+    # TODO Reformulate as ASC3 algorithm
     policy = policy_module.Policy()
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
 
@@ -30,7 +30,7 @@ def train():
 
         running_reward = running_reward * alpha + best_reward * (1-alpha)
 
-        # TODO finish episode MC or TD to update the policy
+        # TODO finish episode MC or TD to update the policy. Alternative?
         # finish_episode(optimizer, rewards)
 
 

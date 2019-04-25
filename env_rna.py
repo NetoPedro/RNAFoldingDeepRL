@@ -8,6 +8,7 @@ class EnvRNA:
         self.rna = rna_module.RNA(sequence)
 
     def step(self,action_pair,N = 10):
+        # TODO Is this reward enough? should add a time penalty?
         previous_value = self.rna.free_energy
         self.rna.pairing(action_pair[0],action_pair[1])
         new_value = self.rna.free_energy

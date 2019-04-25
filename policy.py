@@ -4,7 +4,10 @@ import torch.nn.functional as F
 # Mock policy for testing
 
 class Policy(nn.Module):
-
+    # TODO Change to Policy + Value
+    # TODO add sigmoid layer
+    # TODO Input Sequence + Structure?
+    # TODO One-hot encoded input or other representation ?
     def __init__(self,input_size):
         super().__init__()
 
