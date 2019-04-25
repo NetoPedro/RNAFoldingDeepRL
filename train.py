@@ -22,7 +22,7 @@ def train():
         for t in range(MAX_ITER):
             rewards = []
             action = 0 # select_action(policy,state)
-            state, reward, done, _ = env.step(action)
+            state, reward, done, _ = env.step(action,N)
             rewards.append(reward)
             reward = max(reward,best_reward)
             if done:
