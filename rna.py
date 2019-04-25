@@ -17,6 +17,10 @@ class RNA:
 
         if len(self.structure_representation) > 0 :
             for (n1,n2) in self.structure_representation:
+                if nucleo1 > n2 and nucleo2 > n2:
+                    continue
+                if nucleo1 < n1 and nucleo2 < n1:
+                    continue
                 if not((nucleo1 < n1 and nucleo2 > n2) or (nucleo1 > n1 and nucleo2 < n2) or (nucleo1 == n1 and nucleo2 == n2)):
                     return
 
