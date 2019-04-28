@@ -40,8 +40,13 @@ TODO Add explanation
   
 #### Free Energy
   
+  The free energy is calculated as the number of bases not connected to another. Since we are working on a simplified version of the problem, the only type of connections is a single connection between a pair of bases, where each base can only belong to one pair. Also pseudoknots are not allowed. 
+  The free energy is lower bounded by the left of the number of bases divided by 4. Further bounds can be set considering that not all bases can be connected to each other. 
   
 #### Pairing Function 
+ 
+ This function is responsible for connecting two bases. Because of the restrictions set above, this function needs to verify some flaws in the given data. The function has 2 inputs, the position of each base. In order to connected them it is important to first verify if the bases are connectable, checking for A-U and C-G pairs. Secondly, the connection must not be done if there is any other previous connection that originates a cross with the new one. Finally if the connection already exists it should be removed, otherwise added. 
+  This function ends with an update to the energy function on every situation where the structure is changed. 
 
 ### Environment
 
@@ -51,11 +56,11 @@ The environment is responsible for storing a RNA object and return rewards based
  
 #### Step Function
   
-  ##### Rewards
+##### Rewards
   
 
 
 
 ### Policy
 
-  #### Deep Convolutional Neural Network
+#### Deep Convolutional Neural Network
