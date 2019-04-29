@@ -27,16 +27,20 @@ python main.py
 
 ### RNA 
 
-TODO Add explanation
+The RNA component has the main intention to model the behaviour of a RNA sequence and respective structure. This model is created in a simplified way.
 
  
 #### Sequence
 
   The sequence is a string of the characters "A", "C", "U", "G" that represent the bases present on the RNA. 
+  
+  ![Sequence Example](https://github.com/NetoPedro/RNAFoldingDeepRL/blob/master/RNASequence.png)
 
 #### Structure Representation 
   
   The structure representation is not unique, in a way that the secundary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy, therefore there are 2 different representations in this project. 
+  
+  ![Structure Example](https://github.com/NetoPedro/RNAFoldingDeepRL/blob/master/RNAStructure.png)
   
 #### Free Energy
   
@@ -50,11 +54,15 @@ TODO Add explanation
 
 ### Environment
 
-The environment is responsible for storing a RNA object and return rewards based on an action. 
+The environment is responsible for storing a RNA object and return rewards based on an action.
 
 #### Reset Function
  
+ The reset function is the initial step at each epoch, to reset to default values the fields and variables of the environment. A new RNA object is also created to store the new sequence and with reseted values. This function is called by the __ init __ function.
+ 
 #### Step Function
+
+ The step function receives an action, and using that action it decomposes the action in 2 positions to be connected. This is followed by a call to the pairing function. The reward is constructed with the new value of free-energy subtracted to the old one. This let's us know if there was any kind of improvement to the structure. Finally, it is also responsible for checking if it is possible to further improve the model. If it isn't then the returned value 'done' must be set to true. 
   
 ##### Rewards
   
@@ -64,3 +72,4 @@ The environment is responsible for storing a RNA object and return rewards based
 ### Policy
 
 #### Deep Convolutional Neural Network
+ TODO Talk about architecture, training, loss etc 
