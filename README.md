@@ -4,6 +4,7 @@ Project for the course Machine Learning in Bioinformatics, at Aalto University.
 
   ![Sakurambo [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)]](https://upload.wikimedia.org/wikipedia/commons/3/3f/Stem-loop.svg)
 
+Sakurambo [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)]
 
 ## Overview
 
@@ -76,3 +77,8 @@ The environment is responsible for storing a RNA object and return rewards based
 
 #### Deep Convolutional Neural Network
  TODO Talk about architecture, training, loss etc 
+ 
+![CNN Example](https://upload.wikimedia.org/wikipedia/commons/6/63/Typical_cnn.png)
+
+Aphex34 [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
+
