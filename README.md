@@ -2,6 +2,9 @@
 
 Project for the course Machine Learning in Bioinformatics, at Aalto University.
 
+  ![https://en.wikipedia.org/wiki/Nucleic_acid_secondary_structure#/media/File:Stem-loop.svg](https://en.wikipedia.org/wiki/Nucleic_acid_secondary_structure#/media/File:Stem-loop.svg)
+
+
 ## Overview
 
 This project aims to tackle a simplified version of the RNA folding (secondary structure) problem using reinforcement learning. To achieve the mentionated goal it will be necessary to build the entire environment from scratch, including rewards, states and other necessary utilities. The project will be structured in 3 main components. 
@@ -34,13 +37,13 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
 
   The sequence is a string of the characters "A", "C", "U", "G" that represent the bases present on the RNA. 
   
-  ![Sequence Example](https://github.com/NetoPedro/RNAFoldingDeepRL/blob/master/RNASequence.png)
+  ![Sequence Example](https://github.com/NetoPedro/RNAFoldingDeepRL/master/RNASequence.png)
 
 #### Structure Representation 
   
   The structure representation is not unique, in a way that the secundary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy, therefore there are 2 different representations in this project. 
   
-  ![Structure Example](https://github.com/NetoPedro/RNAFoldingDeepRL/blob/master/RNAStructure.png)
+  ![Structure Example](https://github.com/NetoPedro/RNAFoldingDeepRL/master/RNAStructure.png)
   
 #### Free Energy
   
