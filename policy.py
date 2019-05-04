@@ -4,11 +4,16 @@ import numpy as np
 # Mock policy for testing
 
 class Policy(nn.Module):
-    # TODO add sigmoid layer
+    # TODO change sigmoid activation to softmax
+    # TODO Stack of inputs ?
+    # TODO Reformulate as Actor and Critic networks
     # TODO Input Sequence + Structure?
     # TODO One-hot encoded input or other representation ?
+    # TODO Return as an N * N matrix. Better for the network
     def __init__(self,input_size):
         super().__init__()
+
+
 
         # Input input_size (10) * 8 (2 * 4 nucleoids)
         # Output  input_size  * 20
