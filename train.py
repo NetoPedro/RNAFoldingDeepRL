@@ -2,26 +2,30 @@ import policy as policy_module
 import env_rna
 import torch
 import numpy as np
+from torch.distributions import Categorical
 
 env = env_rna.EnvRNA()
 def train():
-    # TODO Reformulate as ASC3 algorithm
-    policy = policy_module.Policy()
-    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
+    # TODO Reformulate as A3C algorithm
 
     running_reward = 0
     MAX_ITER = 300
     N = 10
     alpha = .95
 
+    policy = policy_module.Policy(N)
+    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
+
+
     for i_episode in range(1):
         seq = generate_random_sequence(N)
-        state = env.reset(seq)
+        env.reset(seq)
+        state = env.rna.structure_representation
         best_reward = 0
 
         for t in range(MAX_ITER):
             rewards = []
-            action = 0 # select_action(policy,state)
+            action =  select_action(state,policy)
             state, reward, done, _ = env.step(action,N)
             rewards.append(reward)
             reward = max(reward,best_reward)
@@ -34,6 +38,13 @@ def train():
         # finish_episode(optimizer, rewards)
 
 
+
+def select_action(state,policy):
+    probs = policy.forward(state)
+    m = Categorical(probs)
+    action = m.sample()
+    policy.saved_log_probs.append(m.log_prob(action))
+    return action.item()
 
 def generate_random_sequence(N):
     sequence = ""
