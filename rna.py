@@ -37,7 +37,7 @@ class RNA:
         self.free_energy = self.update_free_energy()
 
     def build_representations(self,sequence):
-        return [], list("".ljust(len(sequence),"."))
+        return [], 2 * list("".ljust(len(sequence),"."))
 
     #  This function is here for decoupling in case a new and more accurate energy function is given.
     def update_free_energy(self):
