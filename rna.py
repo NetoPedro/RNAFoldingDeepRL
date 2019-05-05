@@ -14,8 +14,8 @@ class RNA:
         if nucleo1 == nucleo2: return
         if nucleo1 > nucleo2:
             nucleo1, nucleo2 = nucleo2, nucleo1
-        if nucleo2 - nucleo1 <= 3:
-            return
+        #if nucleo2 - nucleo1 <= 3:
+        #    return
         if len(self.structure_representation) > 0 :
             for (n1,n2) in self.structure_representation:
                 if nucleo1 > n2 and nucleo2 > n2:
@@ -37,10 +37,10 @@ class RNA:
         self.free_energy = self.update_free_energy()
 
     def build_representations(self,sequence):
-        return [], 2 * list("".ljust(len(sequence),"."))
+        return [],  list("".ljust(len(sequence),"."))
 
     #  This function is here for decoupling in case a new and more accurate energy function is given.
     def update_free_energy(self):
         # For now this represents the number of connections
-        return len(self.structure_representation)
+        return 2 *len(self.structure_representation)
 
