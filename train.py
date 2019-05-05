@@ -6,40 +6,102 @@ from torch.distributions import Categorical
 
 env = env_rna.EnvRNA()
 
-class MonteCarloReinforceTrainer:
+class Reinforce:
+
+
+    running_reward = 0
+    MAX_ITER = 300
+    N = 10
+    alpha = .95
+
+    policy = policy_module.Policy(N)
+    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
+
+    def select_action(state, policy):
+        probs = policy.forward(state)
+        m = Categorical(probs)
+        action = m.sample()
+        policy.saved_log_probs.append(m.log_prob(action))
+        return action.item()
+
+class MonteCarloReinforceTrainer(Reinforce):
 
     def train(self):
-        # TODO Reformulate as A3C algorithm
 
-        running_reward = 0
-        MAX_ITER = 300
-        N = 10
-        alpha = .95
 
-        policy = policy_module.Policy(N)
-        optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
 
 
         for i_episode in range(1):
-            seq = generate_random_sequence(N)
+            seq = generate_random_sequence(self.N)
             env.reset(seq)
             state = env.rna.structure_representation
             ep_reward = 0
 
-            for t in range(MAX_ITER):
+            for t in range(self.MAX_ITER):
                 rewards = []
-                action =  select_action_reinforce(state,policy)
-                state, reward, done, _ = env.step(action,N)
+                action = self.select_action(convert_to_tensor(state, seq), self.policy)
+                state, reward, done, _ = env.step(action,self.N)
                 rewards.append(reward)
                 ep_reward += reward
                 if done:
                     break
 
-            running_reward = running_reward * alpha + ep_reward * (1-alpha)
+            running_reward = running_reward * self.alpha + ep_reward * (1-self.alpha)
 
-            self.finish_episode(optimizer, rewards, policy)
+            self.finish_episode(self.optimizer, rewards, self.policy)
 
 
+
+    def finish_episode(self, rewards):
+        R = 0
+        DISCOUNT_FACTOR = 0.99
+        policy_loss = []
+        returns = []
+        for r in rewards[::-1]:
+            R = r+DISCOUNT_FACTOR*R
+            returns.insert(0, R)
+        returns = torch.tensor(returns)
+        returns = (returns - returns.mean()) / (returns.std())
+        for log_prob, R in zip(self.policy.saved_log_probs, returns):
+            policy_loss.append(-log_prob * R)
+        self.optimizer.zero_grad()
+        policy_loss = torch.cat(policy_loss).sum()
+        policy_loss.backward()
+        self.optimizer.step()
+        del self.policy.rewards[:]
+        del self.policy.saved_log_probs[:]
+
+
+
+
+class TemporalDifferenceReinforceTrainer(Reinforce):
+
+    def train(self):
+
+
+
+        for i_episode in range(1):
+            seq = generate_random_sequence(self.N)
+            env.reset(seq)
+            state = env.rna.structure_representation
+            ep_reward = 0
+
+            for t in range(self.MAX_ITER):
+                rewards = []
+                action =  self.select_action(convert_to_tensor(state,seq),self.policy)
+                state, reward, done, _ = env.step(action,self.N)
+                rewards.append(reward)
+                ep_reward += reward
+                if done:
+                    break
+
+            running_reward = running_reward * self.alpha + ep_reward * (1-self.alpha)
+
+            self.finish_episode(self.optimizer, rewards, self.policy)
+
+
+    def update_policy(self,optimizer, reward ,policy):
+        pass
 
     def finish_episode(self, optimizer, rewards, policy):
         R = 0
@@ -62,13 +124,11 @@ class MonteCarloReinforceTrainer:
 
 
 
+def convert_to_tensor(self,list,sequence):
+    n = len(sequence)
+    tensor = torch.tensor(np.zeros((n,16)))
 
-def select_action_reinforce(state,policy):
-    probs = policy.forward(state)
-    m = Categorical(probs)
-    action = m.sample()
-    policy.saved_log_probs.append(m.log_prob(action))
-    return action.item()
+
 
 def generate_random_sequence(N):
     sequence = ""
