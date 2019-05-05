@@ -17,7 +17,7 @@ class Reinforce:
     policy = policy_module.Policy(N)
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
 
-    def select_action(state, policy):
+    def select_action(self,state, policy):
         probs = policy.forward(state)
         m = Categorical(probs)
         action = m.sample()
@@ -86,7 +86,7 @@ class TemporalDifferenceReinforceTrainer(Reinforce):
             state = env.rna.structure_representation
             ep_reward = 0
 
-            for t in range(self.MAX_ITER):
+            for t in range(self. MAX_ITER):
                 rewards = []
                 action =  self.select_action(convert_to_tensor(state,seq),self.policy)
                 state, reward, done, _ = env.step(action,self.N)
@@ -124,9 +124,23 @@ class TemporalDifferenceReinforceTrainer(Reinforce):
 
 
 
-def convert_to_tensor(self,list,sequence):
+def convert_to_tensor(list,sequence):
     n = len(sequence)
-    tensor = torch.tensor(np.zeros((n,16)))
+    tensor = torch.tensor(np.zeros((1,1,8,n)),dtype=torch.double)
+    base_index = 0
+    for base in sequence:
+        position = 0
+        if base == 'A': position = 0
+        elif base == 'U': position = 2
+        elif base == 'G' : position = 4
+        else : position = 6
+        if len([ (x,y) for x, y in list if x  == base_index or y == base_index ]) != 0:
+            tensor[0][0][position+1][base_index] = 1
+        else:
+            tensor[0][0][position][base_index] = 1
+        base_index +=1
+
+    return tensor
 
 
 
