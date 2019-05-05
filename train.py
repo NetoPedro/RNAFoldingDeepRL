@@ -2,6 +2,7 @@ import policy as policy_module
 import env_rna
 import torch
 import numpy as np
+import torch.nn.functional as F
 import matplotlib.pyplot as mlp
 import arc_diagram
 from torch.distributions import Categorical
@@ -17,22 +18,21 @@ class Reinforce:
     alpha = .95
 
     policy = policy_module.Policy(N)
-    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-2)
+    optimizer = torch.optim.Adam(policy.parameters(), lr=1e-4)
 
     def select_action(self,state, policy):
         probs = policy.forward(state)
         m = Categorical(probs)
+        probs = m.probs
         probs2 = probs
         probs2 = probs2.detach().numpy()
         action = np.unravel_index(np.argmax(probs2, axis=None), probs2.shape)
-        policy.saved_probs.append(probs[action[0]][action[1]])
+        policy.saved_probs.append(m.log_prob(probs))
         return action
 
 class MonteCarloReinforceTrainer(Reinforce):
 
     def train(self):
-
-
 
 
         for i_episode in range(100):
@@ -42,8 +42,8 @@ class MonteCarloReinforceTrainer(Reinforce):
             ep_reward = 0
             rewards = []
             for t in range(self.MAX_ITER):
-                exploration = np.random.uniform(0,1)
-                if exploration <.8:
+                exploration = 1#np.random.uniform(0,1)
+                if exploration > .9 * 1/(i_episode+1):
                     action = self.select_action(convert_to_tensor(state, seq), self.policy)
                     state, reward, done, _ = env.step(action,self.N)
                     rewards.append(reward)
@@ -55,7 +55,7 @@ class MonteCarloReinforceTrainer(Reinforce):
                 ep_reward += reward
                 if done:
                     break
-                if (t+1)%100 == 0:
+                if (t+1)%100 == 0 and i_episode >= 99:
                    mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot)))
 
             self.running_reward = self.running_reward * self.alpha + ep_reward * (1-self.alpha)
@@ -78,7 +78,7 @@ class MonteCarloReinforceTrainer(Reinforce):
             loss = -log_prob * R
             policy_loss.append(loss.unsqueeze(0))
         self.optimizer.zero_grad()
-        policy_loss = torch.cat(policy_loss).sum()
+        policy_loss = torch.stack(policy_loss).sum()
         policy_loss.backward()
         self.optimizer.step()
         del self.policy.saved_probs[:]
@@ -88,51 +88,56 @@ class MonteCarloReinforceTrainer(Reinforce):
 
 class TemporalDifferenceReinforceTrainer(Reinforce):
 
+
     def train(self):
 
 
-
-        for i_episode in range(1):
+        for i_episode in range(100):
             seq = generate_random_sequence(self.N)
             env.reset(seq)
             state = env.rna.structure_representation
             ep_reward = 0
-
-            for t in range(self. MAX_ITER):
-                rewards = []
-                action =  self.select_action(convert_to_tensor(state,seq),self.policy)
-                state, reward, done, _ = env.step(action,self.N)
-                rewards.append(reward)
+            rewards = []
+            for t in range(self.MAX_ITER):
+                exploration = 1#np.random.uniform(0,1)
+                if exploration > .9 * 1/(i_episode+1):
+                    action = self.select_action(convert_to_tensor(state, seq), self.policy)
+                    state, reward, done, _ = env.step(action,self.N)
+                    rewards.append(reward)
+                else:
+                    action = np.random.randint(0,self.N,2)
+                    action = (action[0],action[1])
+                    state, reward, done, _ = env.step(action, self.N)
+                    rewards.append(reward)
                 ep_reward += reward
                 if done:
                     break
+                if (t+1)%100 == 0 and i_episode >= 50:
+                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot)))
+                self.running_reward = self.running_reward + self.alpha * (reward + 0.9 * 2 - self.running_reward)
+                self.update_policy(self.running_reward)
 
-            running_reward = running_reward * self.alpha + ep_reward * (1-self.alpha)
-
-            self.finish_episode(self.optimizer, rewards, self.policy)
 
 
-    def update_policy(self,optimizer, reward ,policy):
-        pass
+            self.finish_episode()
 
-    def finish_episode(self, optimizer, rewards, policy):
+
+    def update_policy(self,reward):
         R = 0
         DISCOUNT_FACTOR = 0.99
         policy_loss = []
         returns = []
-        for r in rewards[::-1]:
-            R = r+DISCOUNT_FACTOR*R
-            returns.insert(0, R)
-        returns = torch.tensor(returns)
-        returns = (returns - returns.mean()) / (returns.std())
-        for log_prob, R in zip(policy.saved_probs, returns):
-            policy_loss.append(-log_prob * R)
-        optimizer.zero_grad()
-        policy_loss = torch.cat(policy_loss).sum()
+        R = reward
+        loss = -self.policy.saved_probs[-1] * R
+        policy_loss.append(loss.unsqueeze(0))
+        self.optimizer.zero_grad()
+        policy_loss = F.smooth_l1_loss(2,loss)
         policy_loss.backward()
-        optimizer.step()
-        del policy.rewards[:]
-        del policy.saved_log_probs[:]
+        self.optimizer.step()
+
+
+    def finish_episode(self):
+        del self.policy.saved_probs[:]
 
 
 
