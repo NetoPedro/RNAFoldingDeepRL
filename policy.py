@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 import torch.nn.functional as F
 import numpy as np
 # Mock policy for testing
@@ -12,52 +13,48 @@ class Policy(nn.Module):
     # TODO Return as an N * N matrix. Better for the network
     def __init__(self,input_size):
         super().__init__()
-
-
+        kernel = 8
+        padding = int((input_size-1)/2)
+        if input_size %2 == 0: kernel = 7
 
         # Input input_size (10) * 8 (2 * 4 nucleoids)
         # Output  input_size  * 20
-        self.conv1 = nn.Conv1d(8,20,4,1,padding=2)
+        self.conv1 = nn.Conv2d(1,4,5,1,padding=2)
 
         # Input  input_size  * 20
         # Output  input_size  * 20
-        self.conv2 = nn.Conv1d(20,20,4,1,padding=2)
+        self.conv2 = nn.Conv2d(4,8,5,1,padding=2)
         # Input  input_size  * 20
         # Output  input_size  * 20
-        self.conv3 = nn.Conv1d(20,20,2,1,padding=1)
+        self.conv3 = nn.Conv2d(8,4,(kernel,5),1,padding=(padding,2))
 
         # Input  input_size  * 20
         # Output  input_size  * 20
-        self.conv4 = nn.Conv1d(20,20,4,1,padding=2)
+        self.conv4 = nn.Conv2d(4,1,3,1,padding=1)
         # Input  input_size  * 20
         # Output  input_size  * 20
-        self.conv5 = nn.Conv1d(20,20,2,1,padding=1)
+        kernel = input_size
+        if input_size % 2 == 0: kernel = kernel -1
+        self.conv5 = nn.Conv2d(1,1,kernel,1,padding=padding)
 
-        # Input  input_size  * 20
-        # Output  input_size  * 8
-        self.conv5 = nn.Conv1d(20,20,2,1,padding=1)
+        self.output = nn.Softmax(dim=0)
 
-        self.value_layer = nn.Linear(20*input_size,1)
-
-        self.saved_log_probs = []
+        self.saved_probs = []
 
     def forward(self, x):
+        size = x.shape[3]
+        x = torch.tensor(x).type('torch.FloatTensor')
         x = F.relu(self.conv1(x))
 
-        y = F.relu(self.conv2(x))
-        y = F.relu(self.conv3(y))
-        x = x + y
-
-        y = F.relu(self.conv4(x))
-        y = F.relu(self.conv5(y))
-        x = y + x
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
 
 
-        action = F.relu(self.conv6(x))
-        action = F.sigmoid(action)
-        x = x.view(-1,1,1)
-        value = self.value_layer(x)
-        return value,x
+        x = F.relu(self.conv4(x))
+        x= F.relu(self.conv5(x))
+        #x = x.view(-1,1,1,1)
+        x = self.output(x.view(-1)).view(size,size)
+        return x
 
 
 
