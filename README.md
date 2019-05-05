@@ -58,7 +58,7 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
   
 #### Pairing Function 
  
- This function is responsible for connecting two bases. Because of the restrictions set above, this function needs to verify some flaws in the given data. The function has 2 inputs, the position of each base. In order to connected them it is important to first verify if the bases are connectable, checking for A-U and C-G pairs. Secondly, the connection must not be done if there is any other previous connection that originates a cross with the new one. Finally if the connection already exists it should be removed, otherwise added. 
+ This function is responsible for connecting two bases. Because of the restrictions set above, this function needs to verify some flaws in the given data. The function has 2 inputs, the position of each base. In order to connected them it is important to first verify if the bases are possible to be connected, checking for A-U and C-G pairs. Secondly, the connection must not be done if there is any other previous connection that originates a cross with the new one. Finally if the connection already exists it should be removed, otherwise added. 
   This function ends with an update to the energy function on every situation where the structure is changed. 
 
 ### Environment
