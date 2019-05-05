@@ -42,9 +42,14 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
 
 #### Structure Representation 
   
-  The structure representation is not unique, in a way that the secundary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy, therefore there are 2 different representations in this project. 
+  The structure representation is not unique, in a way that the secondary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy, therefore there are 2 different representations in this project. 
   
   ![Structure Example](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/RNAStructure.png)
+   
+   Above it is possible to see a common representation of the secondary structure of a RNA sequence. Below it is possible to see a ar diagram representation of other sequence.
+   
+   ![Structure Example](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/arc_diagram.png)
+  
   
 #### Free Energy
   
