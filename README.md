@@ -80,10 +80,27 @@ The environment is responsible for storing a RNA object and return rewards based
 
 ### Policy
 
+#### Reinforce 
+
+#### Actor Critic (A2C or A3C)
+
 #### Deep Convolutional Neural Network
  TODO Talk about architecture, training, loss etc 
  
 ![CNN Example](https://upload.wikimedia.org/wikipedia/commons/6/63/Typical_cnn.png)
 
 Aphex34 [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
+
+
+
+### Training
+
+#### Monte Carlo 
+
+
+#### TD(0) - Temporal Difference 
+
+
+#### TD( \(\lambda\) )
+
 
