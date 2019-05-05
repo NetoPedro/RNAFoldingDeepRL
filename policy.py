@@ -39,6 +39,8 @@ class Policy(nn.Module):
 
         self.value_layer = nn.Linear(20*input_size,1)
 
+        self.saved_log_probs = []
+
     def forward(self, x):
         x = F.relu(self.conv1(x))
 
