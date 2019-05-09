@@ -22,13 +22,11 @@ class Reinforce:
 
     def select_action(self,state, policy):
         probs = policy.forward(state)
-        m = Categorical(probs)
-        probs = m.probs
-        probs2 = probs
-        probs2 = probs2.detach().numpy()
-        action = np.unravel_index(np.argmax(probs2, axis=None), probs2.shape)
-        policy.saved_probs.append(m.log_prob(probs))
-        return action
+        size = probs.view(-1).size(-1)
+        m = Categorical(probs.view(-1))
+        action = m.sample()
+        policy.saved_probs.append(m.log_prob(action))
+        return action.item()
 
 class MonteCarloReinforceTrainer(Reinforce):
 
@@ -142,6 +140,7 @@ class TemporalDifferenceReinforceTrainer(Reinforce):
 
 
 def convert_to_tensor(list,sequence):
+    #TODO Change to NxN tensor
     n = len(sequence)
     tensor = torch.tensor(np.zeros((1,1,8,n)),dtype=torch.double)
     base_index = 0
