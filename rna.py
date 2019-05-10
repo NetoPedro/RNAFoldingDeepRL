@@ -10,7 +10,9 @@ class RNA:
 
     def pairing(self, nucleo1, nucleo2):
         # TODO Verify bases before connecting them. A-U C-G
-
+        if not(self.sequence[nucleo1] == "A" and self.sequence[nucleo2] == "U"):
+            if not(self.sequence[nucleo1] == "C" and self.sequence[nucleo2] == "G"):
+                return
         if nucleo1 == nucleo2: return
         if nucleo1 > nucleo2:
             nucleo1, nucleo2 = nucleo2, nucleo1
