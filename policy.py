@@ -36,9 +36,8 @@ class Policy(nn.Module):
         kernel = input_size
         if input_size % 2 == 0: kernel = kernel -1
         self.conv5 = nn.Conv2d(1,1,kernel,1,padding=padding)
-
-        self.output = nn.Softmax(dim=0)
-
+        self.output = nn.Linear(input_size*input_size,input_size*input_size)
+        self.output_activation = nn.Softmax(dim=0)
         self.saved_probs = []
 
     def forward(self, x):
@@ -53,7 +52,7 @@ class Policy(nn.Module):
         x = F.relu(self.conv4(x))
         x= F.relu(self.conv5(x))
         #x = x.view(-1,1,1,1)
-        x = self.output(x.view(-1)).view(size,size)
+        x = self.output_activation(self.output(x.view(-1)))
         return x
 
 
