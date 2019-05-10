@@ -33,15 +33,15 @@ class MonteCarloReinforceTrainer(Reinforce):
     def train(self):
 
 
-        for i_episode in range(100):
+        for i_episode in range(500):
             seq = generate_random_sequence(self.N)
             env.reset(seq)
             state = env.rna.structure_representation
             ep_reward = 0
             rewards = []
             for t in range(self.MAX_ITER):
-                exploration = 1#np.random.uniform(0,1)
-                if exploration > .9 * 1/(i_episode+1):
+                exploration = np.random.uniform(0,1)
+                if exploration > 0.1 or i_episode > 350:#.9 * 1/(i_episode+1):
                     action = self.select_action(convert_to_tensor(state, seq), self.policy)
                     state, reward, done, _ = env.step(action,self.N)
                     rewards.append(reward)
@@ -52,9 +52,12 @@ class MonteCarloReinforceTrainer(Reinforce):
                     rewards.append(reward)
                 ep_reward += reward
                 if done:
+                    if i_episode >= 490:
+                        mlp.show(arc_diagram.arc_diagram(
+                            arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq))
                     break
-                if (t+1)%100 == 0 and i_episode >= 99:
-                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot)))
+                if (t+1)%100 == 0 and i_episode >= 490:
+                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq))
 
             self.running_reward = self.running_reward * self.alpha + ep_reward * (1-self.alpha)
 
@@ -111,7 +114,7 @@ class TemporalDifferenceReinforceTrainer(Reinforce):
                 if done:
                     break
                 if (t+1)%100 == 0 and i_episode >= 50:
-                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot)))
+                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq))
                 self.running_reward = self.running_reward + self.alpha * (reward + 0.9 * 2 - self.running_reward)
                 self.update_policy(self.running_reward)
 
