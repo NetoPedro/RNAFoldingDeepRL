@@ -22,11 +22,11 @@ class Reinforce:
 
     def select_action(self,state, policy):
         probs = policy.forward(state)
-        size = probs.view(-1).size(-1)
-        m = Categorical(probs.view(-1))
+        m = Categorical(probs)
         action = m.sample()
         policy.saved_probs.append(m.log_prob(action))
-        return action.item()
+        item = action.item()
+        return (int(item/self.N),item%self.N)
 
 class MonteCarloReinforceTrainer(Reinforce):
 
