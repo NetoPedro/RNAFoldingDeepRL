@@ -22,7 +22,7 @@ def _circle(i, r=.05):
 	"""
 	return Circle((i,0.4 ), r, fill=True, color='black')
 
-def arc_diagram(x,sequence, linestyle='-', color='black', width=.5, self_loop='same'):
+def arc_diagram(x,sequence, title, linestyle='-', color='black', width=.5, self_loop='same'):
 	"""
 	self_loop (str): 'same' means you are showing self-loop of i with i
 					 '-1' means you are showing self0loop of i with -1
@@ -42,6 +42,7 @@ def arc_diagram(x,sequence, linestyle='-', color='black', width=.5, self_loop='s
 			ax.add_patch(c)
 	
 	plt.axis('scaled')
+	plt.title(title)
 	return ax
 	
 
