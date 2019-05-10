@@ -1,10 +1,11 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-import numpy as np
+import os
 # Mock policy for testing
 
 class Policy(nn.Module):
+    WEIGHTS_PATH = "./"
     # TODO change sigmoid activation to softmax
     # TODO Stack of inputs ?
     # TODO Reformulate as Actor and Critic networks
@@ -55,8 +56,13 @@ class Policy(nn.Module):
         x = self.output_activation(self.output(x.view(-1)))
         return x
 
+    def save_weights(self, weights_name ):
+        weights_fname = weights_name
+        weights_fpath = os.path.join(self.WEIGHTS_PATH, weights_fname)
+        torch.save({'state_dict': self.state_dict()}, weights_fpath)
 
-
-
+    def load_weights(self, weights_name):
+        state = torch.load(self.WEIGHTS_PATH +weights_name)
+        self.load_state_dict(state['state_dict'])
 
 
