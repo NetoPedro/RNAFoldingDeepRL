@@ -13,8 +13,8 @@ class Reinforce:
 
 
     running_reward = 0
-    MAX_ITER = 300
-    N = 10
+    MAX_ITER = 600
+    N = 20
     alpha = .95
 
     policy = policy_module.Policy(N)
@@ -33,15 +33,17 @@ class MonteCarloReinforceTrainer(Reinforce):
     def train(self):
 
 
-        for i_episode in range(500):
+        for i_episode in range(200):
             seq = generate_random_sequence(self.N)
             env.reset(seq)
             state = env.rna.structure_representation
             ep_reward = 0
             rewards = []
+            bestState = env.rna.structure_representation_dot.copy()
+            bestReward = 0
             for t in range(self.MAX_ITER):
                 exploration = np.random.uniform(0,1)
-                if exploration > 0.1 or i_episode > 350:#.9 * 1/(i_episode+1):
+                if exploration >0.3 or i_episode > 75:#.9 * 1/(i_episode+1):
                     action = self.select_action(convert_to_tensor(state, seq), self.policy)
                     state, reward, done, _ = env.step(action,self.N)
                     rewards.append(reward)
@@ -51,18 +53,29 @@ class MonteCarloReinforceTrainer(Reinforce):
                     state, reward, done, _ = env.step(action, self.N)
                     rewards.append(reward)
                 ep_reward += reward
+                if ep_reward > bestReward:
+                    bestState = env.rna.structure_representation_dot.copy()
+                    bestReward = ep_reward
+
                 if done:
-                    if i_episode >= 490:
+                    print("Done ", i_episode, " iteration ", t)
+                    title = str(i_episode) + " Done at iteration " + str(t)
+                    if i_episode >= 190:
                         mlp.show(arc_diagram.arc_diagram(
-                            arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq))
+                            arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq, title))
+
                     break
-                if (t+1)%100 == 0 and i_episode >= 490:
-                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq))
+                if (t+1)%100 == 0 and i_episode >= 190:
+                   mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq,i_episode))
 
             self.running_reward = self.running_reward * self.alpha + ep_reward * (1-self.alpha)
+            if i_episode >= 190:
+                mlp.show(
+                    arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
+                                            seq, "Best State Achieved"))
 
             self.finish_episode(rewards)
-
+        self.policy.save_weights("monte_carlo_reinforce")
 
 
     def finish_episode(self, rewards):
