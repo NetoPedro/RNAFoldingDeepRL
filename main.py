@@ -18,8 +18,8 @@ def main():
     r.pairing(11, 17)
     r.pairing(12, 16)
     r.pairing(13, 14)
-    #mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(r.structure_representation_dot)))
-    trainer1 =train.TemporalDifferenceReinforceTrainer()
+    mlp.show(arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(r.structure_representation_dot),sequence=r.sequence))
+    trainer1 =train.MonteCarloReinforceTrainer()
     trainer1.train()
 
 

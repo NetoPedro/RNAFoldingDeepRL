@@ -13,28 +13,29 @@ def _arc(i, j, width=1, linestyle='-', color='black'):
 	"""
 	Creating a single arc from i to j
 	"""
-	return Arc(((i+j)/2., 0), abs(i-j), abs(i-j), 0, 0, 180, linewidth=width, 
+	return Arc(((i+j)/2., 0.4), abs(i-j), abs(i-j), 0, 0, 180, linewidth=width,
 		edgecolor=color, fill=False, linestyle=linestyle)
 
 def _circle(i, r=.05):
 	"""
 	Create a small filled circle with center at (i, 0) and radius r
 	"""
-	return Circle((i, 0), r, fill=True, color='black')
+	return Circle((i,0.4 ), r, fill=True, color='black')
 
-def arc_diagram(x, linestyle='-', color='black', width=.5, self_loop='same'):
+def arc_diagram(x,sequence, linestyle='-', color='black', width=.5, self_loop='same'):
 	"""
 	self_loop (str): 'same' means you are showing self-loop of i with i
 					 '-1' means you are showing self0loop of i with -1
 	"""
 	plt.clf()
 	ax = plt.gca()
-	
-	plt.plot([0, len(x)-1], [0, 0], color='black', linewidth=.7)
+	plt.plot([0, len(x)-1], [-0.2, -0.2], color='black', linewidth=.7)
 	plt.axis('off')
 	for i in range(len(x)):
 		j = x[i]
 		ax.add_patch(_circle(i))
+		label = ax.annotate(sequence[i], xy=(i, 0), fontsize=5, ha="center")
+
 		sl_val = -1 if self_loop=='-1' else i
 		if j != sl_val:
 			c = _arc(i, j, width=width, linestyle=linestyle, color=color)
