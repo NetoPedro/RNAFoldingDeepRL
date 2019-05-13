@@ -31,27 +31,30 @@ class Policy(nn.Module):
 
         # Input  input_size  * 20
         # Output  input_size  * 20
-        self.conv4 = nn.Conv2d(4,1,3,1,padding=1)
+        #self.conv4 = nn.Conv2d(4,1,3,1,padding=1)
         # Input  input_size  * 20
         # Output  input_size  * 20
         kernel = input_size
         if input_size % 2 == 0: kernel = kernel -1
-        self.conv5 = nn.Conv2d(1,1,kernel,1,padding=padding)
-        self.output = nn.Linear(input_size*input_size,input_size*input_size)
-        self.output_activation = nn.Softmax(dim=0)
+        #self.conv5 = nn.Conv2d(1,1,kernel,1,padding=padding)
+        self.drop_layer1 = nn.Dropout(p=0.5)
+        self.drop_layer2 = nn.Dropout(p=0.5)
+        self.drop_layer3 = nn.Dropout(p=0.5)
+        self.output = nn.Linear(input_size*input_size*4,input_size*input_size)
+        self.output_activation = nn.Softmax(dim=-1)
         self.saved_probs = []
 
     def forward(self, x):
         size = x.shape[3]
         x = torch.tensor(x).type('torch.FloatTensor')
-        x = F.relu(self.conv1(x))
+        x = F.relu(self.drop_layer1(self.conv1(x)))
 
-        x = F.relu(self.conv2(x))
-        x = F.relu(self.conv3(x))
+        x = F.relu(self.drop_layer1(self.conv2(x)))
+        x = F.relu(self.drop_layer1(self.conv3(x)))
 
 
-        x = F.relu(self.conv4(x))
-        x= F.relu(self.conv5(x))
+        #x = F.relu(self.conv4(x))
+        #x= F.relu(self.conv5(x))
         #x = x.view(-1,1,1,1)
         x = self.output_activation(self.output(x.view(-1)))
         return x
