@@ -2,12 +2,21 @@ import train
 import env_rna
 import matplotlib.pyplot as mlp
 import arc_diagram
-import torch
+from torch.distributions import Categorical
 class ReinforcePredictor(train.Reinforce):
 
-    def predict(self,seq):
+
+    def select_action(self, state, policy):
+        probs = policy.forward(state)
+        m = Categorical(probs)
+        action = m.sample()
+        item = action.item()
+        return (int(item / self.N), item % self.N)
+
+    def predict(self,seq,weights_name,diagram_name):
+
             env = env_rna.EnvRNA()
-            self.policy.load_weights("monte_carlo_reinforce")
+            self.policy.load_weights(weights_name)
             env.reset(seq)
             state = env.rna.structure_representation
             ep_reward = 0
@@ -25,7 +34,6 @@ class ReinforcePredictor(train.Reinforce):
                     bestReward = ep_reward
 
                 if done:
-                    print("Done iteration ", t)
                     title =  " Done at iteration " + str(t)
                     mlp.show(arc_diagram.arc_diagram(
                             arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq, title))
@@ -33,9 +41,9 @@ class ReinforcePredictor(train.Reinforce):
                     break
 
             self.running_reward = self.running_reward * self.alpha + ep_reward * (1-self.alpha)
-            mlp.show(
-                arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
-                                        seq, "Best State Achieved"))
+            arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
+                                    seq, "Best State Achieved")
+            mlp.savefig(diagram_name)
 
 
 
