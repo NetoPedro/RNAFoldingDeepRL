@@ -110,12 +110,16 @@ A prediction is considered correct if its reward matches the upperbound. Neverth
 
 ![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/stats1.png)
 
-![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AGACCGGUCUmonte_carlo_reinforce2000.png)
-![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/AGACCGGUCUtd_reinforce500.png)
+![monte_carlo1](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AGACCGGUCUmonte_carlo_reinforce2000.png)
+![td1](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AGACCGGUCUtd_reinforce500.png)
 
-![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAmonte_carlo_reinforce2000.png)
-![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAtd_reinforce1000.png)
+Above it is possible to see 2 predicted structures. The first is done by a monte carlo reinforce method after 2000 epochs. 
+The second is done by a td(0) reinforce after 500 epochs.
 
+![monte_carlo12](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAmonte_carlo_reinforce2000.png)
+![td2](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAtd_reinforce1000.png)
 
+Above it is possible to see 2 predicted structures. The first is done by a monte carlo reinforce method after 2000 epochs. 
+The second is done by a td(0) reinforce after 1000 epochs.
 
 
