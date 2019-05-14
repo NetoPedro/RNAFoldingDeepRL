@@ -103,4 +103,7 @@ Aphex34 [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
 
 #### TD( \(\lambda\) )
 
+### Results and Comparison 
+
+![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/stats1.png)
 
