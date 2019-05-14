@@ -18,6 +18,7 @@ class ReinforcePredictor(train.Reinforce):
             env = env_rna.EnvRNA()
             self.policy.load_weights(weights_name)
             env.reset(seq)
+            finished = False
             state = env.rna.structure_representation
             ep_reward = 0
             rewards = []
@@ -34,16 +35,20 @@ class ReinforcePredictor(train.Reinforce):
                     bestReward = ep_reward
 
                 if done:
+                    finished = True
                     title =  " Done at iteration " + str(t)
-                    mlp.show(arc_diagram.arc_diagram(
-                            arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq, title))
-
+                    #mlp.show(arc_diagram.arc_diagram(
+                    #        arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),seq, title))
+                    arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot),
+                                            seq, title)
+                    mlp.savefig(diagram_name)
                     break
 
             self.running_reward = self.running_reward * self.alpha + ep_reward * (1-self.alpha)
-            arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
+            if not(finished):
+                arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
                                     seq, "Best State Achieved")
-            mlp.savefig(diagram_name)
+                mlp.savefig(diagram_name)
 
 
 
