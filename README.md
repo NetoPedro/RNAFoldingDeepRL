@@ -110,3 +110,12 @@ A prediction is considered correct if its reward matches the upperbound. Neverth
 
 ![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/stats1.png)
 
+![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AGACCGGUCUmonte_carlo_reinforce2000.png)
+![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/AGACCGGUCUtd_reinforce500.png)
+
+![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAmonte_carlo_reinforce2000.png)
+![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/Predictions/AUGCUGAUGAtd_reinforce1000.png)
+
+
+
+
