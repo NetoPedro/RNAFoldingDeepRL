@@ -105,5 +105,8 @@ Aphex34 [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
 
 ### Results and Comparison 
 
+A prediction is considered correct if its reward matches the upperbound. Nevertheless there are maximal foldings that are lower than the upperbound. Because of this detail the following results must be considered as approximations with some error margin. 
+
+
 ![Stats](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/stats1.png)
 
