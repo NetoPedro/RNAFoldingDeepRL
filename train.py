@@ -22,7 +22,7 @@ class Reinforce:
     number_episodes = 100;
     policy = policy_module.Policy(N)
     optimizer = torch.optim.Adam(policy.parameters(), lr=1e-6)
-
+    weights_dir = "./Weights/"
     def select_action(self,state, policy):
         probs = policy.forward(state)
         m = Categorical(probs)
@@ -83,7 +83,7 @@ class MonteCarloReinforceTrainer(Reinforce):
                                             seq, "Best State Achieved"))
 
             self.finish_episode(rewards)
-        self.policy.save_weights("monte_carlo_reinforce"+self.number_episodes)
+        self.policy.save_weights(self.weights_dir+ "monte_carlo_reinforce"+str(self.number_episodes))
 
 
     def finish_episode(self, rewards):
@@ -141,26 +141,29 @@ class TemporalDifferenceReinforceTrainer(Reinforce):
                     bestReward = ep_reward
 
                 if done:
+                    if i_episode > self.exploration_eps:
+                        self.correct_predictions +=1
+                        self.sum_iterations_done += t
                     print("Done ", i_episode, " iteration ", t)
                     title = str(i_episode) + " Done at iteration " + str(t)
-                    if i_episode >= 300:
+                    if i_episode >= 3000:
                         mlp.show(arc_diagram.arc_diagram(
                             arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot), seq, title))
 
                     break
 
-                if (t + 1) % 100 == 0 and i_episode >= 300:
+                if (t + 1) % 100 == 0 and i_episode >= 3000:
                     mlp.show(arc_diagram.arc_diagram(
                         arc_diagram.phrantheses_to_pairing_list(env.rna.structure_representation_dot), seq, i_episode))
 
                 self.running_reward = self.running_reward * self.alpha + ep_reward * (1 - self.alpha)
-            if i_episode >= 500:
+            if i_episode >= 3000:
                 mlp.show(
                     arc_diagram.arc_diagram(arc_diagram.phrantheses_to_pairing_list(bestState),
                                             seq, "Best State Achieved"))
 
             self.finish_episode()
-        self.policy.save_weights("td_reinforce")
+        self.policy.save_weights(self.weights_dir+"td_reinforce"+str(self.number_episodes))
 
     def update_policy(self,reward):
         R = 0
