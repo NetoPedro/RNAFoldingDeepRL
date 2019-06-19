@@ -51,10 +51,10 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
    ![Structure Example](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/arc_diagram.png)
   
   
-#### Free Energy
+#### Free pairs
   
-  The free energy is calculated as the number of bases not connected to another. Since we are working on a simplified version of the problem, the only type of connections is a single connection between a pair of bases, where each base can only belong to one pair. Also pseudoknots are not allowed. 
-  The free energy is lower bounded by the left of the number of bases divided by 4. Further bounds can be set considering that not all bases can be connected to each other. 
+  The free pairs is calculated as the number of bases not connected to another. Since we are working on a simplified version of the problem, the only type of connections is a single connection between a pair of bases, where each base can only belong to one pair. Also pseudoknots are not allowed. 
+  The free pairs is lower bounded by the left of the number of bases divided by 4. Further bounds can be set considering that not all bases can be connected to each other. 
   
 #### Pairing Function 
  
@@ -75,7 +75,7 @@ The environment is responsible for storing a RNA object and return rewards based
   
 ##### Rewards
   
-
+When an action is performed over a state, the action generates a possible change on the state. From this change it will result a value representing how good was the action performed. The value is usually known as the reward given by some action. Rewards can be positive, negative or just 0 (for example if the state does not change). Regarding this problem, the reward is the difference of connected bases on the statet and state<sub>t+1<\sub>.
 
 
 ### Policy
