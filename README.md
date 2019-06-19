@@ -8,7 +8,7 @@ Sakurambo [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0/)]
 
 ## Overview
 
-This project aims to tackle a simplified version of the RNA folding (secondary structure) problem using reinforcement learning. To achieve the mentionated goal it will be necessary to build the entire environment from scratch, including rewards, states and other necessary utilities. The project will be structured in 3 main components. 
+This project aims to tackle a simplified version of the RNA folding (secondary structure) problem using reinforcement learning. To achieve the mentionated goal it will be necessary to build the entire environment from scratch, including rewards, states and other necessary utilities.  
 
 * RNA
 * Environment 
@@ -32,7 +32,6 @@ python main.py
 ### RNA 
 
 The RNA component has the main intention to model the behaviour of a RNA sequence and respective structure. This model is created in a simplified way.
-
  
 #### Sequence
 
@@ -42,7 +41,7 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
 
 #### Structure Representation 
   
-  The structure representation is not unique, in a way that the secondary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy, therefore there are 2 different representations in this project. 
+  The structure representation is not unique, in a way that the secondary structure of a RNA sequence can be represented by a myriad of ways. Some representations are better to detect pseudoknots, others are better to feed to a policy. 
   
   ![Structure Example](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/RNAStructure.png)
    
@@ -50,42 +49,53 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
    
    ![Structure Example](https://raw.githubusercontent.com/NetoPedro/RNAFoldingDeepRL/master/arc_diagram.png)
   
-  
-#### Free pairs
-  
-  The free pairs is calculated as the number of bases not connected to another. Since we are working on a simplified version of the problem, the only type of connections is a single connection between a pair of bases, where each base can only belong to one pair. Also pseudoknots are not allowed. 
-  The free pairs is lower bounded by the left of the number of bases divided by 4. Further bounds can be set considering that not all bases can be connected to each other. 
-  
-#### Pairing Function 
- 
- This function is responsible for connecting two bases. Because of the restrictions set above, this function needs to verify some flaws in the given data. The function has 2 inputs, the position of each base. In order to connected them it is important to first verify if the bases are possible to be connected, checking for A-U and C-G pairs. Secondly, the connection must not be done if there is any other previous connection that originates a cross with the new one. Finally if the connection already exists it should be removed, otherwise added. 
-  This function ends with an update to the energy function on every situation where the structure is changed. 
+#### Implementation of the structure 
+
+The folding proposed is constrained by the following rules:
+- Pseudoknot or crossing are not allowed
+- A certain base must belong to at most one pair • A-U pairing is permitted
+- C-G pairing is permitted
+
+The structure has a myriad of representations, although for the purpose of this project only three representations are going to be considered. The first, attending to the rules above, is a dot matrix. This is a very good visualization approach, although verifying crosses is expensive. To second representation is a pairing list, a much simpler approach to verify crosses and pseudoknots. Finally the last representation is an One-Hot Encoded matrix detailed on the Policy subsection below.
+
+### State 
+
+The state represents the system at a given step. In this project, the state is defined as the RNA structure at that given step. For example, when the system is initialized the RNA structure does not have any pair, at each step a pairing function tries to update the state to the next step. The state has all the information needed to act on the system.
+
+### Action
+
+Actions are applied over the current state of the system generating another state (sometimes the state remains equal). An action in this problem is characterized by and attempt to pair/unpair two given bases together. It is possible that an action is not possible to be performed, resulting on a similar state.
 
 ### Environment
 
-The environment is responsible for storing a RNA object and return rewards based on an action.
-
-#### Reset Function
- 
- The reset function is the initial step at each epoch, to reset to default values the fields and variables of the environment. A new RNA object is also created to store the new sequence and with reseted values. This function is called by the __ init __ function.
- 
-#### Step Function
-
- The step function receives an action, and using that action it decomposes the action in 2 positions to be connected. This is followed by a call to the pairing function. The reward is constructed with the new value of free-energy subtracted to the old one. This let's us know if there was any kind of improvement to the structure. Finally, it is also responsible for checking if it is possible to further improve the model. If it isn't then the returned value 'done' must be set to true. 
+The state of the system, and all the necessary functions to perform a step are packed in the environment. It is responsible to initialize all the necessary components to the system and is one of the most crucial components. Every step call performs an action, generating a new state, a reward value and an indication if it is possible to further improve from that step to the next ones. It should also include a reset function to reestablish the state of the system.
   
-##### Rewards
+### Rewards
   
-When an action is performed over a state, the action generates a possible change on the state. From this change it will result a value representing how good was the action performed. The value is usually known as the reward given by some action. Rewards can be positive, negative or just 0 (for example if the state does not change). Regarding this problem, the reward is the difference of connected bases on the statet and state<sub>t+1<\sub>.
+When an action is performed over a state, the action generates a possible change on the state. From this change it will result a value representing how good was the action performed. The value is usually known as the reward given by some action. Rewards can be positive, negative or just 0 (for example if the state does not change). Regarding this problem, the reward is the difference of connected bases on the state<sub>t</sub> and state<sub>t+1</sub>.
 
 
 ### Policy
 
-#### Deep Convolutional Neural Network
- TODO Talk about architecture, training, loss etc 
- 
+Exploitation is based on the current knowledge about the problem. To generate actions it is necessary to have a representation of the current knowledge. This representation is usually a mathematical function that predicts what should be done next, given a state as input. At the beginning the knowledge represented by the policy is much similar to a random exploration, but during the training process given some rewards the function parameters are updated to approximate the function to the optimal representation of the system dynamics.
+
+The policy can be any mathematical technique able to represent a complex enough representation of the dynamics present on the system. In this paper, a deep convolutional neural network represents the policy as seen on the figure below. These networks were popularized by image recognition and other image-related tasks. Nevertheless, they perform generally good with most matrix-based inputs.
+
 ![CNN Example](https://upload.wikimedia.org/wikipedia/commons/6/63/Typical_cnn.png)
 
 Aphex34 [CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0)]
+
+As the input for the network, the state is represented by an 8*n matrix, where n stands for the size of the sequence. This representation simulates for each position from 0 to n and hot-encoding on the following categories:
+1. Base A unpaired
+2. Base A paired
+3. Base U unpaired 
+4. Base U paired
+5. Base C unpaired 
+6. Base C paired
+7. Base G unpaired 
+8. Base G paired
+ 
+
 
 
 
