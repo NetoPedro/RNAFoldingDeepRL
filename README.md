@@ -53,7 +53,8 @@ The RNA component has the main intention to model the behaviour of a RNA sequenc
 
 The folding proposed is constrained by the following rules:
 - Pseudoknot or crossing are not allowed
-- A certain base must belong to at most one pair • A-U pairing is permitted
+- A certain base must belong to at most one pair 
+- A-U pairing is permitted
 - C-G pairing is permitted
 
 The structure has a myriad of representations, although for the purpose of this project only three representations are going to be considered. The first, attending to the rules above, is a dot matrix. This is a very good visualization approach, although verifying crosses is expensive. To second representation is a pairing list, a much simpler approach to verify crosses and pseudoknots. Finally the last representation is an One-Hot Encoded matrix detailed on the Policy subsection below.
@@ -97,17 +98,16 @@ As the input for the network, the state is represented by an 8*n matrix, where n
  
 
 
-
-
 ### Training
 
 #### Monte Carlo 
 
+Monte Carlo updates can be viewed as an episode-based update. With this method, the policy must be updated once at the end of each episode based on the obtained reward. This approach requires low computational power since the policy updates are not that frequent. Hence, it also originates some dumb initial guesses and possible slow convergence (depending on the initialized weights). Furthermore, since the updates are only at the end of the episode it does not give any detailed information regarding particular actions. For example, if a set of 100 actions is taken, with one of them being really bad, but an overall positive reward, the monte carlo update will not address that bad action.
 
 #### TD(0) - Temporal Difference 
 
+Differently from the previous approach, temporal difference, also known as TD(0), updates the policy at each time step. These frequent updates lead to a faster convergence and a specific feedback on each action. Unfortunately, it introduces two other disadvantages, as the computational cost of updating the network, sometimes hundreds of times per episode and the introduction of a bias and reduction of the variance.
 
-#### TD( \(\lambda\) )
 
 ### Results and Comparison 
 
